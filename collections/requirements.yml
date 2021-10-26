@@ -3,7 +3,7 @@ collections:
   - name: ansible.posix
 
   - name: community.general
-    source: https://towerhub.shadowman.dev/api/galaxy/content/community/
+    source: https://towerpah.shadowman.dev/api/galaxy/content/community/
 
 
   
