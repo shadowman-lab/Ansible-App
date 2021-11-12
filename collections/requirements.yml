@@ -3,7 +3,6 @@ collections:
   - name: ansible.posix
 
   - name: community.general
-    source: https://towerpah.shadowman.dev/api/galaxy/content/community/
 
 
   
