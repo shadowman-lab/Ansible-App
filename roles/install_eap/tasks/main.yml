@@ -25,20 +25,20 @@
 
 - name: Enable on boot and start service
   ansible.builtin.systemd:
-    enabled: yes
+    enabled: true
     name: eap7-standalone.service
     state: started
 
 - name: Open Firewalld for management port https
   ansible.posix.firewalld:
     port: 9993/tcp
-    permanent: yes
+    permanent: true
     state: enabled 
   notify: restart_firewalld
 
 - name: Open Firewalld for https
   ansible.posix.firewalld:
     port: 8443/tcp
-    permanent: yes
+    permanent: true
     state: enabled 
   notify: restart_firewalld
