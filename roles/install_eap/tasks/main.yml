@@ -33,12 +33,12 @@
   ansible.posix.firewalld:
     port: 9993/tcp
     permanent: true
-    state: enabled 
+    state: enabled
   notify: restart_firewalld
 
 - name: Open Firewalld for https
   ansible.posix.firewalld:
     port: 8443/tcp
     permanent: true
-    state: enabled 
+    state: enabled
   notify: restart_firewalld
