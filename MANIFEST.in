@@ -1,0 +1,4 @@
+recursive-exclude .git *
+include README.md
+include *.yml
+recursive-include roles *.yml
