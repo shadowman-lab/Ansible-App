@@ -1,4 +1,3 @@
-recursive-exclude .git *
 include README.md
 include .gitignore
 include *.yml
@@ -8,5 +7,6 @@ include app/mazewars.war
 include .config/ansible-lint.yml
 include .github/workflows/ansible-lint.yml
 include *.code-workspace
+recursive-exclude .git *
 recursive-include roles *.yml
 recursive-include collections *.yml
