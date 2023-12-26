@@ -13,13 +13,13 @@
 
 - name: Install EAP
   ansible.builtin.yum:
-    name: '@jboss-eap7-jdk11'
+    name: "@jboss-eap7-jdk11"
     state: present
   when: ansible_distribution_version is match("7.*")
 
 - name: Install EAP
   ansible.builtin.dnf:
-    name: '@jboss-eap7-jdk11'
+    name: "@jboss-eap7-jdk11"
     state: present
   when: ansible_distribution_version is match("8.*")
 
