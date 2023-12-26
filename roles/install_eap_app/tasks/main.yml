@@ -5,7 +5,7 @@
     dest: /opt/rh/eap7/root/usr/share/wildfly/standalone/deployments
     owner: root
     group: root
-    mode: '0644'
+    mode: "0644"
 
 - name: Set stats for the e-mail body and ServiceNow
   ansible.builtin.set_stats:
@@ -16,5 +16,5 @@
 - name: Set stats for the e-mail subject
   ansible.builtin.set_stats:
     data:
-      email_subject: "Ansible EAP app link"
+      email_subject: Ansible EAP app link
     aggregate: false
