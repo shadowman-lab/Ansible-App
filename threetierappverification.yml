@@ -1,0 +1,107 @@
+---
+- name: Set up Groups for playbook
+  hosts: localhost
+  gather_facts: false
+
+  tasks:
+
+    - name: Create psql group
+      ansible.builtin.add_host:
+        hostname: "{{ psql_vm }}"
+        groups: pgsql
+
+    - name: Create jbcs group
+      ansible.builtin.add_host:
+        hostname: "{{ jbcs_vm }}"
+        groups: jbcs
+
+    - name: Create jboss group
+      ansible.builtin.add_host:
+        hostname: "{{ item }}"
+        groups: jboss
+      loop: "{{ jboss_vm.split(',') }}"
+
+- name: Verify JBoss EAP
+  hosts: jboss
+  become: true
+  vars:
+    rhn_username: "87ec2aa7-a357-4b3f-b2ca-a1f7ff92e062"
+    rhn_password: "{{ offline_token }}"
+    eap_apply_cp: true
+    eap_version: 7.4.0
+    eap_offline_install: false
+    eap_install_workdir: '/opt/jboss_eap/'
+    eap_app_firewalld_enabled: true
+    eap_home: "{{ eap_install_workdir }}jboss-eap-7.4"
+    eap_service_config_file_location: "/etc"
+    eap_config_base: 'standalone-full-ha.xml'
+    eap_driver_module_name: 'org.postgresql'
+    eap_driver_version: 9.4.1212
+    eap_driver_jar_filename: "postgresql-{{ eap_driver_version }}.jar"
+    eap_driver_jar_url: "https://repo.maven.apache.org/maven2/org/postgresql/postgresql/{{ eap_driver_version }}/{{ eap_driver_jar_filename }}"
+    eap_enable_yml_config: True
+    eap_yml_configs:
+      - eap_configuration.yml.j2
+
+  roles:
+    - role: redhat.eap.eap_install
+      vars:
+        eap_install:
+          download_url: "{{ eap_install_download_url }}"
+          workdir: "{{ eap_install_workdir }}"
+          archive_dir: "/opt/jboss_eap"
+          archive_name: "{{ eap_archive_filename }}"
+          home: "{{ eap_home }}"
+          config: "{{ eap_config_custom_file | basename if eap_config_custom_file | length > 0 else eap_config_base }}"
+          config_custom: "{{ eap_config_custom_file }}"
+          user: "{{ eap_user }}"
+          group: "{{ eap_group }}"
+          java:
+            package_name: "{{ eap_java_package_name }}"
+    - role: redhat.eap.eap_systemd
+      vars:
+        eap_systemd:
+          user: "{{ eap_user }}"
+          group: "{{ eap_group }}"
+          home: "{{ eap_home }}"
+          config: "{{ eap_config_custom_file | basename if eap_config_custom_file | length > 0 else eap_config_base }}"
+          config_custom: "{{ eap_config_custom_file }}"
+          enabled: "{{ eap_systemd_unit_enabled }}"
+          yml_config:
+            base_path: '/modules/system/layers/base'
+            eap_path: '/modules/system/layers/base/.overlays/layer-base-jboss-eap-'
+            path: /org/jboss/as/controller/main/dir/META-INF/services
+            file: org.jboss.as.controller.persistence.ConfigurationExtension
+          jvm_version_command:
+            RedHat: "rpm -ql {{ eap_java_package_name }} | grep -Po '/usr/lib/jvm/.*(?=/bin/java$)'"
+            Debian: "update-alternatives --query java | grep 'Value: ' | grep -o '/.*/jre'"
+
+    - redhat.eap.eap_driver
+
+  tasks:
+    - name: Ensure webapp has been retrieved
+      ansible.builtin.get_url:
+        url: "{{ app.url }}"
+        dest: "/opt/jboss_eap/jboss-eap-7.4/{{ app.name }}"
+
+    - name: Ensure eap service has been restarted to prepare for web app deployment
+      ansible.builtin.systemd:
+        name: eap.service
+        state: restarted
+
+    - name: "Deploy webapp"
+      ansible.builtin.include_role:
+        name: redhat.eap.eap_utils
+        tasks_from: jboss_cli.yml
+      vars:
+        jboss_cli_query: "'deploy --force /opt/jboss_eap/jboss-eap-7.4/{{ app.name }}'"
+
+  post_tasks:
+
+    - name: Perform post deploy validation
+      ansible.builtin.include_role:
+        name: eap_app_validate
+
+    - name: Display jbcs link
+      ansible.builtin.debug:
+        msg: "https://{{ jbcs_vm }}/{{ app.name.split('.')[0] }}"

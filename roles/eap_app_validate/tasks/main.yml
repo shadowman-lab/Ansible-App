@@ -1,0 +1,32 @@
+---
+
+- name: Verify port 8080 is open
+  ansible.builtin.wait_for:
+    port: "8080"
+
+- name: Checks that Wildfly server is running and accessible on port 8080
+  ansible.builtin.get_url:
+    url: "http://localhost:8080/"
+    dest: '/dev/null'
+    mode: "0644"
+  changed_when: false
+
+- name: Set a default result file
+  ansible.builtin.set_fact:
+    result_file: "/tmp/app-check.txt"
+
+- name: Get address book information
+  ansible.builtin.get_url:
+    url: "http://localhost:8080/addressbook/"
+    dest: "{{ result_file }}"
+    mode: "0644"
+  changed_when: false
+
+- name: Pull in results file
+  ansible.builtin.slurp:
+    src: "{{ result_file }}"
+  register: appcheck_res
+
+- name: Debug results
+  ansible.builtin.debug:
+    msg: "{{ appcheck_res['content'] | b64decode }}"

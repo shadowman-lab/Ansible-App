@@ -1,0 +1,51 @@
+---
+- name: Install mailcap
+  ansible.builtin.dnf:
+    name: mailcap
+    state: present
+
+- name: Copy shadowman cert
+  ansible.builtin.copy:
+    src: /certs/shadowman_cert.cer
+    dest: /etc/pki/tls/certs/{{ inventory_hostname }}.crt
+    mode: "0644"
+
+- name: Copy shadowman key
+  ansible.builtin.copy:
+    src: /certs/shadowman_private.key
+    dest: /etc/pki/tls/private/{{ inventory_hostname }}.key
+    mode: "0644"
+
+- name: Set httpd_can_network_connect flag on and keep it persistent across reboots
+  ansible.posix.seboolean:
+    name: httpd_can_network_connect
+    state: true
+    persistent: true
+
+- name: Set nid_enabled flag on and keep it persistent across reboots
+  ansible.posix.seboolean:
+    name: nis_enabled
+    state: true
+    persistent: true
+
+- name: Add reverse proxied port to selinux
+  ansible.builtin.command: semanage port -m -t http_port_t -p tcp 8080
+  changed_when: false
+
+- name: Add reverse proxied port to selinux
+  ansible.builtin.command: semanage port -m -t http_port_t -p tcp 8009
+  changed_when: false
+
+- name: Configure firewall for JBCS ports
+  ansible.posix.firewalld:
+    port: "{{ port }}"
+    permanent: true
+    state: enabled
+    immediate: true
+  loop:
+    - "80/tcp"
+    - "6666/tcp"
+    - "443/tcp"
+    - "8080/tcp"
+  loop_control:
+    loop_var: port

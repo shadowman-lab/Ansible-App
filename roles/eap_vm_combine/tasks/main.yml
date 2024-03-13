@@ -1,0 +1,6 @@
+---
+- name: Set stats VMs to provision and configure # noqa run-once[task]
+  ansible.builtin.set_stats:
+    data:
+      vm_name: "{{ psql_vm }},{{ jbcs_vm }},{{ jboss_vm }}"
+  run_once: true

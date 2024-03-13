@@ -1,0 +1,24 @@
+---
+- name: Restart Postgres
+  ansible.builtin.systemd_service:
+    daemon_reload: true
+    name: postgresql
+    state: restarted
+
+- name: Verify Connection
+  block:
+    - name: Wait for postgres port
+      ansible.builtin.wait_for:
+        port: 5432
+        delay: 5
+        timeout: 15
+      listen: Restart Postgres
+  rescue:
+    - name: Force stop postgresql https://access.redhat.com/solutions/5605181
+      ansible.builtin.systemd_service:
+        daemon_reexec: true
+
+    - name: Restart postgres
+      ansible.builtin.service:
+        name: postgresql
+        state: restarted

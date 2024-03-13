@@ -1,0 +1,7 @@
+---
+- name: Install JBOSS EAP
+  hosts: localhost
+  gather_facts: false
+
+  roles:
+    - eap_vm_combine
