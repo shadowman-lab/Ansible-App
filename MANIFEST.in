@@ -1,6 +1,7 @@
 include README.md
 include .gitignore
 include *.yml
+include eap_configuration.yml.j2
 include .DS_Store
 include .vscode/extensions.json
 include devfile.yaml
