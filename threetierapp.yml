@@ -113,19 +113,10 @@
         url: "{{ app.url }}"
         dest: "/opt/jboss_eap/jboss-eap-7.4/{{ app.name }}"
 
-    - name: Ensure eap service has been restarted to prepare for web app deployment
-      ansible.builtin.systemd:
-        name: eap.service
-        state: restarted
+    - name: Force all notified handlers to run at this point
+      ansible.builtin.meta: flush_handlers
 
     - name: Deploy webapp
-      ansible.builtin.include_role:
-        name: redhat.eap.eap_utils
-        tasks_from: jboss_cli.yml
-      vars:
-        jboss_cli_query: "'deploy --force /opt/jboss_eap/jboss-eap-7.4/{{ app.name }}'"
-
-    - name: Ensure Web App is deployed
       ansible.builtin.include_role:
         name: redhat.eap.eap_utils
         tasks_from: jboss_cli.yml
