@@ -118,9 +118,40 @@
         name: eap.service
         state: restarted
 
-    - name: "Deploy webapp"
+    - name: Deploy webapp
       ansible.builtin.include_role:
         name: redhat.eap.eap_utils
         tasks_from: jboss_cli.yml
       vars:
         jboss_cli_query: "'deploy --force /opt/jboss_eap/jboss-eap-7.4/{{ app.name }}'"
+
+    - name: Ensure Web App is deployed
+      ansible.builtin.include_role:
+        name: redhat.eap.eap_utils
+        tasks_from: jboss_cli.yml
+      vars:
+        jboss_cli_query: "'deploy --force /opt/jboss_eap/jboss-eap-7.4/{{ app.name }}'"
+
+  post_tasks:
+
+    - name: Perform post deploy validation
+      ansible.builtin.include_role:
+        name: eap_app_validate
+
+    - name: Display jbcs link
+      ansible.builtin.debug:
+        msg: "https://{{ jbcs_vm }}/{{ app.name.split('.')[0] }}"
+
+    - name: Set stats for the e-mail body and ServiceNow
+      ansible.builtin.set_stats:
+        data:
+          email_body: "{{ jbcs_vm }}: https://{{ jbcs_vm }}/{{ app.name.split('.')[0] }} "
+          work_notes: "[code]<a href='https://{{ jbcs_vm }}/{{ app.name.split('.')[0] }}'>{{ jbcs_vm }}</a>[/code] "
+          expose_to_cloud_redhat_com_results: "{{ jbcs_vm }}: https://{{ jbcs_vm }}/{{ app.name.split('.')[0] }}"
+      run_once: true
+
+    - name: Set stats for the e-mail subject # noqa run-once[task]
+      ansible.builtin.set_stats:
+        data:
+          email_subject: Ansible App Link
+      run_once: true
