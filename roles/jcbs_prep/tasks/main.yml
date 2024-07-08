@@ -1,6 +1,6 @@
 ---
 - name: Install mailcap
-  ansible.builtin.package:
+  ansible.builtin.dnf:
     name: mailcap
     state: present
 

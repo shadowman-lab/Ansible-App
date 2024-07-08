@@ -1,5 +1,5 @@
 - name: Install PostgreSQL and relate packages
-  ansible.builtin.package:
+  ansible.builtin.dnf:
     name: "{{ pgsql.packages_list }}"
     state: present
 
