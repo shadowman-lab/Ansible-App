@@ -75,6 +75,7 @@
   roles:
     - role: redhat.eap.eap_install
       vars:
+        eap_firewalld_enabled: true
         eap_install:
           download_url: "{{ eap_install_download_url }}"
           workdir: "{{ eap_install_workdir }}"
