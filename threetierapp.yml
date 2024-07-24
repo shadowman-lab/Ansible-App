@@ -44,6 +44,7 @@
     rhn_password: "{{ offline_token }}"
     jbcs_bind_address: 0.0.0.0
     jbcs_offline_install: false
+    jbcs_distro: "{{ 'RHEL8' if ansible_distribution_version is match('8.*') else 'RHEL9' }}"
     jbcs_mod_cluster_enable: true
     jbcs_zip_path: "{{ lookup('env', 'PWD') }}"
 
