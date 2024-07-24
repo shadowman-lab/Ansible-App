@@ -6,7 +6,7 @@
 
 - name: Install PostgreSQL and relate packages for RHEL 9
   ansible.builtin.dnf:
-    name: "{{ pgsql.packages_list }}"
+    name: "{{ pgsql.packages_list_el_9 }}"
     state: present
   when: ansible_distribution_version is match("9.*")
 
