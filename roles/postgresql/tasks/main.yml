@@ -1,7 +1,14 @@
-- name: Install PostgreSQL and relate packages
+- name: Install PostgreSQL and relate packages for RHEL 8
+  ansible.builtin.dnf:
+    name: "{{ pgsql.packages_list_el_8 }}"
+    state: present
+  when: ansible_distribution_version is match("8.*")
+
+- name: Install PostgreSQL and relate packages for RHEL 9
   ansible.builtin.dnf:
     name: "{{ pgsql.packages_list }}"
     state: present
+  when: ansible_distribution_version is match("9.*")
 
 - name: Get path for pg_hba configuration
   ansible.builtin.stat:
