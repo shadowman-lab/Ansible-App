@@ -57,11 +57,11 @@
     rhn_username: "87ec2aa7-a357-4b3f-b2ca-a1f7ff92e062"
     rhn_password: "{{ offline_token }}"
     eap_apply_cp: true
-    eap_version: 7.4.0
+    eap_version: 8.0.2
     eap_offline_install: false
     eap_install_workdir: '/opt/jboss_eap/'
     eap_app_firewalld_enabled: true
-    eap_home: "{{ eap_install_workdir }}jboss-eap-7.4"
+    eap_home: "{{ eap_install_workdir }}jboss-eap-8.0"
     eap_service_config_file_location: "/etc"
     eap_config_base: 'standalone-full-ha.xml'
     eap_driver_module_name: 'org.postgresql'
@@ -114,7 +114,7 @@
     - name: Ensure webapp has been retrieved
       ansible.builtin.get_url:
         url: "{{ app.url }}"
-        dest: "/opt/jboss_eap/jboss-eap-7.4/{{ app.name }}"
+        dest: "/opt/jboss_eap/jboss-eap-8.0/{{ app.name }}"
 
     - name: Force all notified handlers to run at this point
       ansible.builtin.meta: flush_handlers
@@ -133,7 +133,7 @@
         name: redhat.eap.eap_utils
         tasks_from: jboss_cli.yml
       vars:
-        jboss_cli_query: "'deploy --force /opt/jboss_eap/jboss-eap-7.4/{{ app.name }}'"
+        jboss_cli_query: "'deploy --force /opt/jboss_eap/jboss-eap-8.0/{{ app.name }}'"
 
   post_tasks:
 
