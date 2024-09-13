@@ -5,10 +5,11 @@
     port: "8080"
 
 - name: Checks that Wildfly server is running and accessible on port 8080
-  ansible.builtin.get_url:
+  ansible.builtin.uri:
     url: "http://localhost:8080/"
-    dest: '/dev/null'
-    mode: "0644"
+    status_code:
+      - 200
+    validate_certs: false
   changed_when: false
 
 - name: Set a default result file
