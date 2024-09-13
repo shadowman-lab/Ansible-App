@@ -57,7 +57,7 @@
     rhn_username: "87ec2aa7-a357-4b3f-b2ca-a1f7ff92e062"
     rhn_password: "{{ offline_token }}"
     eap_apply_cp: true
-    eap_version: 8.0.2
+    eap_version: 8.0.0
     eap_offline_install: false
     eap_install_workdir: '/opt/jboss_eap/'
     eap_app_firewalld_enabled: true
