@@ -6,7 +6,7 @@ components:
       args: ['tail', '-f', '/dev/null']
       image: 'tower.shadowman.dev/devee:latest'
       memoryRequest: 256M
-      memoryLimit: 6Gi
+      memoryLimit: 2Gi
       cpuRequest: 250m
-      cpuLimit: 2000m
+      cpuLimit: 500m
     name: ansible
