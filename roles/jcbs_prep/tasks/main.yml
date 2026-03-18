@@ -1,7 +1,9 @@
 ---
-- name: Install mailcap
+- name: Install mailcap and openldap-compat
   ansible.builtin.dnf:
-    name: mailcap
+    name:
+      - openldap-compat
+      - mailcap
     state: present
 
 - name: Copy shadowman cert
