@@ -82,8 +82,17 @@
     db: "{{ item.name }}"
     name: "{{ item.user }}"
     password: "{{ item.password }}"
-    priv: ALL
     state: present
+  with_items: "{{ pgsql.db }}"
+
+- name: Update permissions
+  community.postgresql.postgresql_privs:
+    login_db: "{{ item.name }}"
+    login_password: "{{ item.password }}"
+    login_user: "{{ item.user }}"
+    privs: ALL
+    type: database
+    role: CURRENT_USER
   with_items: "{{ pgsql.db }}"
 
 - name: Open Firewalld for 5432
