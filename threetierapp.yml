@@ -91,6 +91,7 @@
             package_name: "{{ eap_java_package_name }}"
     - role: redhat.eap.eap_systemd
       vars:
+        eap_systemd_java_version: 17
         eap_systemd:
           user: "{{ eap_user }}"
           group: "{{ eap_group }}"
