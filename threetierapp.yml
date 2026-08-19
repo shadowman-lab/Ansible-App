@@ -92,6 +92,7 @@
     - role: redhat.eap.eap_systemd
       vars:
         eap_systemd_java_version: 17
+        eap_systemd_java_home: "/etc/alternatives/jre_{{ eap_systemd_java_version }}"
         eap_systemd:
           user: "{{ eap_user }}"
           group: "{{ eap_group }}"
