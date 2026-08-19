@@ -89,6 +89,9 @@
           group: "{{ eap_group }}"
           java:
             package_name: "{{ eap_java_package_name }}"
+
+    - redhat.eap.eap_driver
+
     - role: redhat.eap.eap_systemd
       vars:
         eap_systemd_java_version: 17
@@ -110,8 +113,6 @@
           jvm_version_command:
             RedHat: "rpm -ql {{ eap_java_package_name }} | grep -Po '/usr/lib/jvm/.*(?=/bin/java$)'"
             Debian: "update-alternatives --query java | grep 'Value: ' | grep -o '/.*/jre'"
-
-    - redhat.eap.eap_driver
 
   tasks:
     - name: Ensure webapp has been retrieved
